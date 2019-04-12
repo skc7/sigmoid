@@ -65,9 +65,6 @@ def main():
         b = b - eta * db
         ax.scatter(w,b,error(w,b),marker='.',color='k')
         ax.scatter(w,b,-3,marker='.',color='k')
-
-    
-
     plt.show()
 
 
