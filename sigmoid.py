@@ -126,9 +126,46 @@ def do_mini_batch_gradient_descent(w,b,eta,max_epochs):
                 dw,db = 0, 0 
     plt.show()
 
+def do_adaptive_gradient_descent(w, b, eta, max_epochs) :
+    graph_plot()
+    v_w, v_b, eps = 0, 0, 1e-8
+    for i in range(max_epochs) :
+        dw, db = 0, 0
+        for x,y in zip(X,Y) :
+            dw = dw + grad_w(w,b,x,y)
+            db = db + grad_b(w,b,x,y)
+        v_w = v_w + dw**2
+        v_b = v_b + db**2
+
+        w = w - (eta / np.sqrt(v_w + eps))*dw
+        b = b - (eta / np.sqrt(v_b + eps))*db
+        ax.scatter(w,b,error(w,b),marker='.',color='k')
+        ax.scatter(w,b,-1,marker='.',color='k')
+    plt.show()
+
+def do_rms_prop(w, b, eta, max_epochs) :
+    graph_plot()
+    v_w, v_b, eps = 0, 0, 1e-8
+    beta1 = 0.9
+    for i in range(max_epochs) :
+        dw, db = 0, 0
+        for x,y in zip(X,Y) :
+            dw = dw + grad_w(w,b,x,y)
+            db = db + grad_b(w,b,x,y)
+        v_w = beta1 * v_w + (1 - beta1) * dw**2
+        v_b = beta1 * v_b + (1 - beta1) * db**2
+
+        w = w - (eta / np.sqrt(v_w + eps))*dw
+        b = b - (eta / np.sqrt(v_b + eps))*db
+        ax.scatter(w,b,error(w,b),marker='.',color='k')
+        ax.scatter(w,b,-1,marker='.',color='k')
+    plt.show()
+
+
+
 def main():
     w, b, eta, max_epochs = -2, -2, 0.5, 1000
-    do_mini_batch_gradient_descent(w, b, eta, max_epochs)
+    do_rms_prop(w, b, eta, max_epochs)
     
 
 
