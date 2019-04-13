@@ -3,8 +3,8 @@ import random
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt 
 
-X = [0.2, 0.5, 0.8, 1.3]
-Y = [1.2, 1.0, 0.3,1.4]
+X = [0.5, 2.5]
+Y = [0.2, 0.9]
 
 def f(w,b,x) :
     return 1.0/(1.0 + np.exp(-(w*x + b)))
@@ -54,6 +54,19 @@ def do_gradient_descent(w, b, eta, max_epochs) :
         ax.scatter(w,b,-1,marker='.',color='k')
     plt.show()
 
+def do_stochastic_gradient_descent(w, b, eta, max_epochs) :
+    graph_plot()
+    for i in range(max_epochs) :
+        dw, db = 0, 0
+        for x,y in zip(X,Y) :
+            dw = dw + grad_w(w,b,x,y)
+            db = db + grad_b(w,b,x,y)
+            w = w - eta * dw
+            b = b - eta * db
+        ax.scatter(w,b,error(w,b),marker='.',color='k')
+        ax.scatter(w,b,-1,marker='.',color='k')
+    plt.show()
+
 def do_momentum_gradient_descent(w,b,eta,max_epochs):
     graph_plot()
     prev_v_w, prev_v_b, gamma = 0, 0, 0.2
@@ -94,9 +107,28 @@ def do_nesterov_accelerated_gradient_descent(w,b,eta,max_epochs):
         prev_v_b = v_b 
     plt.show()
 
+def do_mini_batch_gradient_descent(w,b,eta,max_epochs):
+    graph_plot()
+    w,b,eta =-2,-2,1.0
+    mini_batch_size, num_points_seen = 2,0
+    for i in range(max_epochs):
+        dw, db, num_points_seen = 0,0,0
+        for x,y in zip(X,Y):
+            dw = dw + grad_w(w,b,x,y)
+            db = db + grad_b(w,b,x,y)
+            num_points_seen = num_points_seen + 1
+
+            if num_points_seen % mini_batch_size == 0 :
+                w = w - eta*dw
+                b = b - eta*db
+                ax.scatter(w,b,error(w,b),marker='.',color='k')
+                ax.scatter(w,b,-1,marker='.',color='k')
+                dw,db = 0, 0 
+    plt.show()
+
 def main():
-    w, b, eta, max_epochs = 2.5, 5, 0.5, 1000
-    do_nesterov_accelerated_gradient_descent(w, b, eta, max_epochs)
+    w, b, eta, max_epochs = -2, -2, 0.5, 1000
+    do_mini_batch_gradient_descent(w, b, eta, max_epochs)
     
 
 
