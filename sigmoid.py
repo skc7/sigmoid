@@ -3,8 +3,8 @@ import random
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt 
 
-X = [0.5, 2.5]
-Y = [0.2, 0.9]
+X = [0.2, 0.5, 0.8, 1.3]
+Y = [1.2, 1.0, 0.3,1.4]
 
 def f(w,b,x) :
     return 1.0/(1.0 + np.exp(-(w*x + b)))
@@ -70,13 +70,34 @@ def do_momentum_gradient_descent(w,b,eta,max_epochs):
         ax.scatter(w,b,error(w,b),marker='.',color='k')
         ax.scatter(w,b,-1,marker='.',color='k')
         prev_v_w = v_w
-        prev_v_b = v_b
+        prev_v_b = v_b 
+    plt.show()
+
+def do_nesterov_accelerated_gradient_descent(w,b,eta,max_epochs):
+    graph_plot()
+    prev_v_w, prev_v_b, gamma = 0, 0, 0.9
+    for i in range(max_epochs):
+        dw, db = 0, 0
+        v_w = gamma*prev_v_w 
+        v_b = gamma*prev_v_b 
+        for x, y in zip(X,Y):
+            dw = dw + grad_w(w - v_w ,b - v_b,x,y)
+            db = db + grad_b(w - v_w, b - v_b,x,y)
+
+        v_w = gamma*prev_v_w + eta*dw
+        v_b = gamma*prev_v_b + eta*db
+        w = w - v_w
+        b = b - v_b
+        ax.scatter(w,b,error(w,b),marker='.',color='k')
+        ax.scatter(w,b,-1,marker='.',color='k')
+        prev_v_w = v_w
+        prev_v_b = v_b 
     plt.show()
 
 def main():
-    w, b, eta, max_epochs = -2, -2, 1.0, 1000
-    do_momentum_gradient_descent(w, b, eta, max_epochs)
-    do_gradient_descent(w, b, eta, max_epochs)
+    w, b, eta, max_epochs = 2.5, 5, 0.5, 1000
+    do_nesterov_accelerated_gradient_descent(w, b, eta, max_epochs)
+    
 
 
 if __name__ == "__main__":
